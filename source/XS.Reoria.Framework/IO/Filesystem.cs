@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Windows.Forms;
 
 namespace XS.Reoria.Framework.IO
@@ -11,16 +12,22 @@ namespace XS.Reoria.Framework.IO
         public FileSystem()
         {
             this.SeparatorChar = Path.DirectorySeparatorChar.ToString();
-            this.Root = this.CleansePath(Application.StartupPath + this.SeparatorChar, true);
+            this.Root = this.CleanPath(Application.StartupPath + this.SeparatorChar);
         }
 
-        public string CleansePath(string path)
+        public string RelativePath(string path)
         {
-            // Forward to the hidden override.
-            return this.CleansePath(path, false);
+            // Append the root path to the cleaned relative path.
+            return this.Root + this.CleanPath(path);
+        }
+        
+        public string AbsolutePath(string path)
+        {
+            // Return the cleaned absolute the cleaned path.
+            return this.CleanPath(path);
         }
 
-        private string CleansePath(string path, bool isroot)
+        private string CleanPath(string path)
         {
             // Create a temporary instance of the input path.
             string tmp = path;
@@ -30,14 +37,8 @@ namespace XS.Reoria.Framework.IO
             tmp = tmp.Replace(@"\", this.SeparatorChar);
             tmp = tmp.Replace("/", this.SeparatorChar);
 
-            // Temporarily remove the root path if it is in the path.
-            tmp = (!isroot) ? tmp.Replace(this.Root, string.Empty) : tmp;
-
-            // Find out if we are handling a directory or file path.
-            bool isdir = (tmp.Substring(tmp.Length - 1, 1) == this.SeparatorChar);
-
             // Are we cleaning a directory or file path?
-            if (isdir)
+            if (this.IsDirectoryPath(tmp))
             {
                 // Directory path is simple, just loop through and replace the invalid characters.
                 foreach (char c in Path.GetInvalidPathChars())
@@ -48,27 +49,42 @@ namespace XS.Reoria.Framework.IO
             else
             {
                 // File path is not simple, start by separating the file and directory paths.
-                string dirpath = tmp.Substring(0, tmp.LastIndexOf(this.SeparatorChar) + 1);
-                string filepath = tmp.Substring(tmp.LastIndexOf(this.SeparatorChar) + 1);
-
-                // Go and clean the directory path.
-                dirpath = this.CleansePath(dirpath, true);
-
-                // Loop through and replace the invalid file path characters.
-                foreach (char c in Path.GetInvalidFileNameChars())
+                using (ExtractedDirectoryPath p = this.ExtractDirectoryPath(tmp))
                 {
-                    filepath = filepath.Replace(c.ToString(), string.Empty);
-                }
+                    // Go and clean the directory path.
+                    p.Directory = this.CleanPath(p.Directory);
 
-                // Now put the path back together.
-                tmp = dirpath + filepath;
+                    // Loop through and replace the invalid file path characters.
+                    foreach (char c in Path.GetInvalidFileNameChars())
+                    {
+                        p.File = p.File.Replace(c.ToString(), string.Empty);
+                    }
+
+                    // Now put the path back together.
+                    tmp = p.FullPath;
+                }
             }
 
-            // Are we cleansing the root path, if not append the root path.
-            tmp = (!isroot) ? this.Root + tmp : tmp;
-
-            // Return the new path.
             return tmp;
+        }
+
+        public bool IsDirectoryPath(string path)
+        {
+            // Check if the last character is the seperator character.
+            return (path.Substring(path.Length - 1, 1) == this.SeparatorChar);
+        }
+
+        public ExtractedDirectoryPath ExtractDirectoryPath(string path)
+        {
+            // Create the return value.
+            ExtractedDirectoryPath retval = new ExtractedDirectoryPath();
+
+            // Split the strings.
+            retval.Directory = path.Substring(0, path.LastIndexOf(this.SeparatorChar) + 1);
+            retval.File = path.Substring(path.LastIndexOf(this.SeparatorChar) + 1);
+
+            // Return the extracted paths.
+            return retval;
         }
     }
 }

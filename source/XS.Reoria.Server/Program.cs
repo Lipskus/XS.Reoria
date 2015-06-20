@@ -26,7 +26,7 @@ namespace XS.Reoria.Server
 
             while (run)
             {
-                Console.WriteLine(fs.CleansePath(@"test\file.xml"));
+                Console.WriteLine(fs.RelativePath(@"test\file.xml"));
             }
 
             input = null;
