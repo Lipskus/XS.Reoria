@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using XS.Reoria.Framework.IO;
 
 namespace XS.Reoria.Server
 {
@@ -21,9 +22,11 @@ namespace XS.Reoria.Server
 
             input.Start();
 
+            FileSystem fs = new FileSystem();
+
             while (run)
             {
-                Console.WriteLine("Hello!");
+                Console.WriteLine(fs.CleansePath(@"test\file.xml"));
             }
 
             input = null;
