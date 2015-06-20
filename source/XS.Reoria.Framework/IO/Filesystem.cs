@@ -29,6 +29,12 @@ namespace XS.Reoria.Framework.IO
             tmp = tmp.Replace("\\", this.SeparatorChar);
             tmp = tmp.Replace("/", this.SeparatorChar);
 
+            // Temporarily remove the root path if it is in the path.
+            tmp = (!isroot) ? tmp.Replace(this.Root, string.Empty) : tmp;
+
+            // Find out if we are handling a directory or file path.
+            bool isdir = (tmp.Substring(tmp.Length - 1, 1) == this.SeparatorChar);
+
             // Are we cleansing the root path, if not append the root path.
             tmp = (!isroot) ? this.Root + tmp : tmp;
 
