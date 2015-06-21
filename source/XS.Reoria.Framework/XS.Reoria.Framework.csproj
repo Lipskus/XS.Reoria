@@ -42,6 +42,9 @@
   <ItemGroup>
     <Compile Include="IO\ExtractedDirectoryPath.cs" />
     <Compile Include="IO\FileSystem.cs" />
+    <Compile Include="Logging\Logger.cs" />
+    <Compile Include="Logging\Verbosity.cs" />
+    <Compile Include="Logging\VerbosityExtension.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
