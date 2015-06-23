@@ -40,6 +40,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Application.cs" />
+    <Compile Include="ApplicationState.cs" />
     <Compile Include="IO\ExtractedDirectoryPath.cs" />
     <Compile Include="IO\FileSystem.cs" />
     <Compile Include="Logging\Logger.cs" />

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Windows.Forms;
+using WinApp = System.Windows.Forms.Application;
 
 namespace XS.Reoria.Framework.IO
 {
@@ -12,7 +13,7 @@ namespace XS.Reoria.Framework.IO
         public FileSystem()
         {
             this.SeparatorChar = Path.DirectorySeparatorChar.ToString();
-            this.Root = this.CleanPath(Application.StartupPath + this.SeparatorChar);
+            this.Root = this.CleanPath(WinApp.StartupPath + this.SeparatorChar);
         }
 
         public string RelativePath(string path)
